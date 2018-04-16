@@ -1,4 +1,5 @@
 # Orbit-Jump
+Group Members: Xiaoxiao Du,Rustem Tursyn
 a spanceship is revolving around a planet. Once the player hit the keyboard,
 the propeller will push the spaceship along the tangent line, aiming at the target planet.
 If the spaceship miss the orbit of the next planet, the player loses. 
