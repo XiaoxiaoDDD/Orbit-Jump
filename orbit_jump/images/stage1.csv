@@ -1,0 +1,8 @@
+ShootingStar,3,/images/shootingStar.png,3,150,70,2
+BgShootingStar,4,/images/bgshootingStar.png,3,200,100,1
+Planet,200,300,40,/images/1.png
+Planet,400,500,60,/images/2.png
+Planet,1500,200,50,/images/3.png
+Planet,1200,400,90,/images/4.png
+Planet,600,300,40,/images/5.png
+Planet,1700,600,60,/images/6.png
