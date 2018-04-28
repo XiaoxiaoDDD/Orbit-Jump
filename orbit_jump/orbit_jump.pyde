@@ -1,4 +1,3 @@
-#planet jump
 import math
 import random
 
@@ -11,17 +10,37 @@ path=os.getcwd()
 # print path
 
 class Planet:
-    def __init__(self,x,y,r,name):
+    def __init__(self,x,y,r,name,type):
         self.x=x
         self.y=y
-        self.r=r
-        self.o=r*1.8
+        self.r=r # radius of planet
+        self.o=r*1.8 # radius of orbit
         self.name=name
         self.img=loadImage(self.name)
-        
+
     def display(self):
         
         image(self.img,self.x-self.r-game.x, self.y-self.r, 2*self.r, 2*self.r)
+
+class Blackhole(Planet):
+    def __init__(self,x,y,r,name,type):
+        Planet.__init__(self,x,y,r,name)
+        self.o=self.r*1.5
+        self.type="blackhole"
+        
+    def collapse(self):
+        self.o = self.o*0.9
+        
+                
+class ShrinkingOrbit(Planet):
+    def __init__(self,x,y,r,name,type):
+        
+        if radius >=numer:
+            self.o+=1
+        if radius<number:
+            self.o-=1
+    
+            
     
     
 class Ship:
@@ -67,9 +86,9 @@ class ShootingStar(Items):
 class BgShootingStar(Items):
     def __init__(self,interval,imageName,speed,w,h,angle):
         Items.__init__(self,interval,imageName,speed,w,h,angle)
+        
 
-        
-        
+                
 class Game:
     def __init__(self,numPlanet):
         self.numPlanet=numPlanet
@@ -82,44 +101,93 @@ class Game:
         self.y0=0
         self.score=0
         self.fire=loadImage(path+'/images/bigfire.png')
-        
+        self.stage = 'r' # status of the ship (char) 'r'- orbiting planet; 't'-traveling between planet; 'b'-sinkinginto blackhole
+        self.lv  = 0 # level of game (int) 0 is menu, lv >0 stands foractual level ,4 is entering name, 5 is showing high scores
+
+    
         
         
     def bgimg(self):
         self.bgimg=loadImage(path+"/images/galaxy.jpg")
 
-    
-    def creategame(self):
+    def loadlevel(self, lv):
+        
         self.gameover=False
         self.showfire=False
         self.numFrame=0
         self.time=0
         
+
         #create the planets
         self.planets=[]
-        f = open(path+'/images/stage1.csv','r')
+
+        f = open(path+'/images/stage/'+str(self.level)+'.csv','r')
+        # reading csv file of the following format
+        
+        # name,size,radius,
+        
         for l in f:
             l = l.strip().split(",")
             if l[0]=="ShootingStar":
                 self.star=ShootingStar(int(l[1]),l[2],int(l[3]),int(l[4]),int(l[5]),int(l[6]))    
-            # elif l[0]=="Meteorolite":
-            #     self.meteorolite=Meteorolite(int(l[1]),l[2],int(l[3]),int(l[4]),int(l[5]))
+            elif l[0]=="Meteorolite":
+                self.meteorolite=Meteorolite(int(l[1]),l[2],int(l[3]),int(l[4]),int(l[5]))
             elif l[0]=="BgShootingStar":
                 self.bgstar=BgShootingStar(int(l[1]),l[2],int(l[3]),int(l[4]),int(l[5]),int(l[6]))
             elif l[0]=="Planet":
-                self.planets.append(Planet(int(l[1]),int(l[2]),int(l[3]),path+l[4]))
+                if l[5]=='simple':
+                    self.planets.append(Planet(int(l[1]),int(l[2]),int(l[3]),path+l[4]),l[5])
+                if l[5]=='blackhole':
+                    self.planets.append(Blackhole(int(l[1]),int(l[2]),int(l[3]),path+l[4]),l[5])
+                    
+           # elif 
         f.close()
         
         print self.planets
 
+    
+    # def creategame(self):
+    #     self.gameover=False
+    #     self.showfire=False
+    #     self.numFrame=0
+    #     self.time=0
+        
+    #     #create the planets
+    #     self.planets=[]
+    #     f = open(path+'/images/stage1.csv','r')
+    #     # reading csv file of the following format
+        
+    #     # name,size,radius,
+        
+    #     for l in f:
+    #         l = l.strip().split(",")
+    #         if l[0]=="ShootingStar":
+    #             self.star=ShootingStar(int(l[1]),l[2],int(l[3]),int(l[4]),int(l[5]),int(l[6]))    
+    #         elif l[0]=="Meteorolite":
+    #             self.meteorolite=Meteorolite(int(l[1]),l[2],int(l[3]),int(l[4]),int(l[5]))
+    #         elif l[0]=="BgShootingStar":
+    #             self.bgstar=BgShootingStar(int(l[1]),l[2],int(l[3]),int(l[4]),int(l[5]),int(l[6]))
+    #         elif l[0]=="Planet":
+    #             self.planets.append(Planet(int(l[1]),int(l[2]),int(l[3]),path+l[4]))
+    #        # elif 
+    #     f.close()
+        
+    #     print self.planets
+
         #create the spaceship
         self.ship=Ship(0,0,self.planets[0])
-        self.revolve=True
+        #self.revolve=True
         
         #revolving
         self.angle=0
         self.clockwise=False
         self.freefly=0 #the time the spaceship travels between planets
+        
+        
+        
+        
+
+        
         
     def distance(self,x1,y1,x2,y2):
         return ((x1-x2)**2+(y1-y2)**2)**0.5
@@ -130,7 +198,8 @@ class Game:
         for p in self.planets:
             if p!=self.ship.planet and self.distance(self.ship.x,self.ship.y,p.x,p.y)<=(p.o+self.ship.r):
                 self.score+=50
-                self.revolve=True
+                #self.revolve=True
+                self.stage = 'r'
                 self.freefly=0
                 self.cosinConnect=(self.ship.planet.x-p.x)/self.distance(self.ship.planet.x,self.ship.planet.y,p.x,p.y)
              #decide the flying direction       
@@ -179,23 +248,28 @@ class Game:
 
     def update(self):
         #make the ship revolve around the selected planet
-        if self.revolve==True:
+        
+        if self.stage == 'r':
+            # orbiting update code
             self.ship.x=self.ship.planet.x+self.ship.planet.o*cos(self.angle)
             self.ship.y=self.ship.planet.y-self.ship.planet.o*sin(self.angle)
-        else:
-            #travel between planets
+        elif self.stage == 't':
+            # traveling b/n planet code
             if self.clockwise==False:
                 self.ship.x=self.x0-self.freefly*sin(math.pi-self.angle)
                 self.ship.y=self.y0+self.freefly*cos(math.pi-self.angle)
             else:
                 self.ship.x=self.x0+self.freefly*sin(math.pi-self.angle)
                 self.ship.y=self.y0-self.freefly*cos(math.pi-self.angle)
-            
-        
-        if self.revolve==False:
             if self.ship.x>self.w/2:
                 self.x=int(self.ship.x-self.w/2)
-      
+            
+      if self.level== 1 ornself.level== 2 or self.level==3:
+          if self.ship.x== blacholes center and self.ship.y==blackholes center y:
+              self.level+=1
+              
+              
+          
             
         self.neworbit()
             
@@ -236,6 +310,17 @@ class Game:
         self.ship.display()
         
 
+    if self.level=0:
+        variable=loadImage(path of the image of the play)
+        image(variable,leftcornerx,leftconery,width,legnth)
+        variable=loadImage(path of the image of the REACORD)
+        image(variable,leftcornerx,leftconery,width,legnth)
+    if self.level==4:
+        #this is where you enter the name
+    if self.level==5:
+        #this is showing the record
+        
+
 game=Game(7)
 
 def setup():
@@ -244,8 +329,10 @@ def setup():
     game.creategame()
 
 def draw():
+
     game.display()
-    if game.revolve==True:
+    #if game.revolve==True:
+    if game.stage == 'r':
         if game.clockwise==False:
             game.angle+=0.05
         else:
@@ -254,10 +341,17 @@ def draw():
         game.freefly+=6
     
     
-def mousePressed():
-    pass
-def mouseReleased():
-    pass
+def mouseClicked():
+    if game.level==0:
+        if sth<=mouseX<=sth, <mouseY: #if the player click the PLAY buttom
+            game.level=1
+        if sth<=mouseX<=sth, <mouseY: # if the player click RECORD
+            game.level==5
+    if game.level==5:
+        if sth<=mouseX<=sth, <mouseY: #if click the BACK buttom
+            game.level=0
+        
+
     
 def keyPressed():
     if keyCode==32:
@@ -265,7 +359,9 @@ def keyPressed():
 
 def keyReleased():
     if keyCode==32:
-        game.revolve=False
+        
+        #game.revolve=False
+        game.stage = 't'
         game.x0=game.ship.x
         game.y0=game.ship.y
         game.showfire=False
