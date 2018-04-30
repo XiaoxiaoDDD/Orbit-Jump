@@ -34,15 +34,14 @@ class Blackhole(Planet):
                 
 class ShrinkingOrbit(Planet):
     def __init__(self,x,y,r,name,type):
-        
-        if radius >=numer:
-            self.o+=1
-        if radius<number:
-            self.o-=1
+        Planet.__init__(self,x,y,r,name)
+        if self.r >=300:
+            self.o+=2
+        if radius<= 700:
+            self.o-=2
     
             
-    
-    
+        
 class Ship:
     def __init__(self,x,y,centralPlanet):
         self.x=x
@@ -102,15 +101,12 @@ class Game:
         self.score=0
         self.fire=loadImage(path+'/images/bigfire.png')
         self.stage = 'r' # status of the ship (char) 'r'- orbiting planet; 't'-traveling between planet; 'b'-sinkinginto blackhole
-        self.lv  = 0 # level of game (int) 0 is menu, lv >0 stands foractual level ,4 is entering name, 5 is showing high scores
-
-    
-        
+        self.level  = 0 # level of game (int) 0 is menu, lv >0 stands foractual level ,4 is entering name, 5 is showing high scores        
         
     def bgimg(self):
         self.bgimg=loadImage(path+"/images/galaxy.jpg")
 
-    def loadlevel(self, lv):
+    def loadlevel(self, level):
         
         self.gameover=False
         self.showfire=False
@@ -310,15 +306,24 @@ class Game:
         self.ship.display()
         
 
-    if self.level=0:
-        variable=loadImage(path of the image of the play)
-        image(variable,leftcornerx,leftconery,width,legnth)
-        variable=loadImage(path of the image of the REACORD)
-        image(variable,leftcornerx,leftconery,width,legnth)
-    if self.level==4:
-        #this is where you enter the name
-    if self.level==5:
-        #this is showing the record
+        if self.level=0:
+            self.playgame=loadImage(path+"/images/playgame.png")
+            image(self.playgame,300,200,100,100)
+            self.record=loadImage(path+"/images/score.png")
+            image(self.record,300,700,100,100)
+        if self.level==4:
+            #this is where you enter the name
+            background(0)
+            textSize(32)
+            text("Please enter your name",game.w//2,game.h//2-200)
+            text(game.name,game.w//2,game.h//2)
+                
+        if self.level==5:
+            #this is showing the record
+            background(0)
+            textSize(32)
+            f = open("highscores.csv","a")
+            f.read()
         
 
 game=Game(7)
@@ -326,7 +331,7 @@ game=Game(7)
 def setup():
     size(game.w,game.h)
     game.bgimg()
-    game.creategame()
+    game.loadlevel()
 
 def draw():
 
@@ -343,9 +348,9 @@ def draw():
     
 def mouseClicked():
     if game.level==0:
-        if sth<=mouseX<=sth, <mouseY: #if the player click the PLAY buttom
+        if 300<=mouseX<=400 and 200<mouseY,300: #if the player click the PLAY buttom
             game.level=1
-        if sth<=mouseX<=sth, <mouseY: # if the player click RECORD
+        if 300<=mouseX<=400, 700<mouseY<800: # if the player click RECORD
             game.level==5
     if game.level==5:
         if sth<=mouseX<=sth, <mouseY: #if click the BACK buttom
@@ -356,6 +361,25 @@ def mouseClicked():
 def keyPressed():
     if keyCode==32:
         game.showfire=True
+    if game.level=='playgame':
+        print (keyCode)
+        game.mario.keyHandler[keyCode]=True
+        
+        if keyCode == 80:
+           game.paused = not game.paused
+           game.pauseSound.play()
+    elif game.state=='inputName':
+        print keyCode, key, type(key)
+        if keyCode == 8:
+            game.name = game.name[:len(game.name)-1]
+        elif keyCode == 10:
+            f = open("highscores.csv","a")
+            f.write(game.name+','+str(game.score)+'\n')
+            f.close()
+            game.__init__()
+            game.loadlevel()
+        elif type(key) != int :
+            game.name += key
 
 def keyReleased():
     if keyCode==32:
