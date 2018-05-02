@@ -37,7 +37,7 @@ Features to be added:
 
 - Sound: we will add the background sound and the sound when the user wins the game and loses the game.
 - Further complicate Level3. We will add moving images of asteroids. These asteroids will be flying among planets. The user should not hit the asteroid when shooting the spacehip. 
-
+- Right now the program recognizes blackholes from which spaceship emerges as "planets", spaceship can jump back to the blackhole while game is still on. This will be fixed
 
 
 
