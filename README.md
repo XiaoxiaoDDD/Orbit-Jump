@@ -1,6 +1,7 @@
 # Orbit-Jump
 Group Members: Xiaoxiao Du,Rustem Tursyn
-a spanceship is revolving around a planet. Once the player hit the keyboard,
+
+A spanceship is revolving around a planet. Once the player hit the keyboard,
 the propeller will push the spaceship along the tangent line, aiming at the target planet.
 If the spaceship miss the orbit of the next planet, the player loses. 
 Else, it would jump to the next orbit and continue revolving around it.
@@ -33,11 +34,7 @@ Level5: the results page. When the user either loses the game or wins tha game, 
 
 
 
-Features to be added:
 
-- Sound: we will add the background sound and the sound when the user wins the game and loses the game.
-- Further complicate Level3. We will add moving images of asteroids. These asteroids will be flying among planets. The user should not hit the asteroid when shooting the spacehip. 
-- Right now the program recognizes blackholes from which spaceship emerges as "planets", spaceship can jump back to the blackhole while game is still on. This will be fixed
 
 
 
